@@ -74,8 +74,12 @@ public final class FailoverService {
             jobNodeStorage.executeInLeader(FailoverNode.LATCH, new FailoverLeaderExecutionCallback());
         }
     }
-    
+
+
     private boolean needFailover() {
+        /**
+         * 失效转移节点存在 且 获取作业节点子节点名称列表存在 且 JOB本身在运行
+         */
         return jobNodeStorage.isJobNodeExisted(FailoverNode.ITEMS_ROOT) && !jobNodeStorage.getJobNodeChildrenKeys(FailoverNode.ITEMS_ROOT).isEmpty()
                 && !JobRegistry.getInstance().isJobRunning(jobName);
     }
@@ -157,6 +161,9 @@ public final class FailoverService {
             }
             int crashedItem = Integer.parseInt(jobNodeStorage.getJobNodeChildrenKeys(FailoverNode.ITEMS_ROOT).get(0));
             log.debug("Failover job '{}' begin, crashed item '{}'", jobName, crashedItem);
+            /**
+             * 由故障转移节点进行填充节点数据
+             */
             jobNodeStorage.fillEphemeralJobNode(FailoverNode.getExecutionFailoverNode(crashedItem), JobRegistry.getInstance().getJobInstance(jobName).getJobInstanceId());
             jobNodeStorage.removeJobNodeIfExisted(FailoverNode.getItemsNode(crashedItem));
             // TODO 不应使用triggerJob, 而是使用executor统一调度

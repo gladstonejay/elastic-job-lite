@@ -33,23 +33,45 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public final class JobCoreConfiguration {
-    
+
+    /**
+     * 作业名称.
+     */
     private final String jobName;
     
     private final String cron;
-    
+
+    /**
+     * 分片总数.
+     */
     private final int shardingTotalCount;
-    
+
+    /**
+     * 分配于本作业实例的分片参数.
+     */
     private final String shardingItemParameters;
-    
+
+    /**
+     * 作业自定义参数.
+     * 可以配置多个相同的作业, 但是用不同的参数作为不同的调度实例.
+     */
     private final String jobParameter;
-    
+
+    /**
+     * 失效转移
+     */
     private final boolean failover;
-    
+
+    /**
+     * 失败
+     */
     private final boolean misfire;
     
     private final String description;
-    
+
+    /**
+     * 作业属性
+     */
     private final JobProperties jobProperties;
     
     /**
