@@ -35,15 +35,24 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class JobRegistry {
     
     private static volatile JobRegistry instance;
-    
+
+    /**
+     * 调度map
+     */
     private Map<String, JobScheduleController> schedulerMap = new ConcurrentHashMap<>();
     
     private Map<String, CoordinatorRegistryCenter> regCenterMap = new ConcurrentHashMap<>();
-    
+
+    /**
+     * 作业初始化时添加到 CHM
+     */
     private Map<String, JobInstance> jobInstanceMap = new ConcurrentHashMap<>();
     
     private Map<String, Boolean> jobRunningMap = new ConcurrentHashMap<>();
-    
+
+    /**
+     * 将任务的shardingTotalCount缓存到内存
+     */
     private Map<String, Integer> currentShardingTotalCountMap = new ConcurrentHashMap<>();
     
     /**

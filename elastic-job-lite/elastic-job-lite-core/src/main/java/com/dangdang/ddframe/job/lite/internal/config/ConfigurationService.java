@@ -68,6 +68,9 @@ public final class ConfigurationService {
      */
     public void persist(final LiteJobConfiguration liteJobConfig) {
         checkConflictJob(liteJobConfig);
+        /**
+         * 如果作业不存在 或 覆盖写为真
+         */
         if (!jobNodeStorage.isJobNodeExisted(ConfigurationNode.ROOT) || liteJobConfig.isOverwrite()) {
             jobNodeStorage.replaceJobNode(ConfigurationNode.ROOT, LiteJobConfigurationGsonFactory.toJson(liteJobConfig));
         }
@@ -75,6 +78,9 @@ public final class ConfigurationService {
     
     private void checkConflictJob(final LiteJobConfiguration liteJobConfig) {
         Optional<LiteJobConfiguration> liteJobConfigFromZk = find();
+        /**
+         * 判断配置是否存在 && ZK中的配置与当前任务配置是否一致
+         */
         if (liteJobConfigFromZk.isPresent() && !liteJobConfigFromZk.get().getTypeConfig().getJobClass().equals(liteJobConfig.getTypeConfig().getJobClass())) {
             throw new JobConfigurationException("Job conflict with register center. The job '%s' in register center's class is '%s', your job class is '%s'", 
                     liteJobConfig.getJobName(), liteJobConfigFromZk.get().getTypeConfig().getJobClass(), liteJobConfig.getTypeConfig().getJobClass());
@@ -82,9 +88,15 @@ public final class ConfigurationService {
     }
     
     private Optional<LiteJobConfiguration> find() {
+        /**
+         * 如果JOB节点不存在 则返回 对象不存在
+         */
         if (!jobNodeStorage.isJobNodeExisted(ConfigurationNode.ROOT)) {
             return Optional.absent();
         }
+        /**
+         * 查看配置是否存在
+         */
         LiteJobConfiguration result = LiteJobConfigurationGsonFactory.fromJson(jobNodeStorage.getJobNodeDataDirectly(ConfigurationNode.ROOT));
         if (null == result) {
             // TODO 应该删除整个job node,并非仅仅删除config node

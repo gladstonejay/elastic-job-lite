@@ -42,6 +42,9 @@ public final class JobInstance {
     private final String jobInstanceId;
     
     public JobInstance() {
+        /**
+         * 本机IP + 运行时环境的相应变量 "name":"12164@qh12018010209",
+         */
         jobInstanceId = IpUtils.getIp() + DELIMITER + ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
     }
     
